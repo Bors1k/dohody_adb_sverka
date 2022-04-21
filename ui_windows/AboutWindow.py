@@ -16,7 +16,7 @@ class Ui_aboutWindow(object):
         aboutWindow.setObjectName("aboutWindow")
         aboutWindow.resize(400, 180)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/assets/info.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(":/assets/info.ico"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         aboutWindow.setWindowIcon(icon)
         aboutWindow.setStyleSheet("color: white;\n"
 "background-color: rgb(45, 59, 68);")
@@ -29,6 +29,7 @@ class Ui_aboutWindow(object):
         self.label = QtWidgets.QLabel(aboutWindow)
         font = QtGui.QFont()
         font.setBold(True)
+        font.setWeight(75)
         self.label.setFont(font)
         self.label.setObjectName("label")
         self.horizontalLayout_6.addWidget(self.label)
@@ -63,6 +64,7 @@ class Ui_aboutWindow(object):
         self.label_4 = QtWidgets.QLabel(aboutWindow)
         font = QtGui.QFont()
         font.setBold(True)
+        font.setWeight(75)
         self.label_4.setFont(font)
         self.label_4.setObjectName("label_4")
         self.horizontalLayout_3.addWidget(self.label_4)
@@ -101,4 +103,5 @@ class Ui_aboutWindow(object):
         self.label_4.setText(_translate("aboutWindow", "Разработали"))
         self.label_5.setText(_translate("aboutWindow", "Специалист-эксперт ОИС - Новиков Михаил Александрович"))
         self.label_6.setText(_translate("aboutWindow", "Специалист 1 разряда ОИС - Шилкин Юрий Викторович"))
+
 from ui_windows import resource
