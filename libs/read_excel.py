@@ -100,7 +100,7 @@ class ReadExcel(QThread):
         print(str(c_postup_vsego_value))
 
 
-        self.protokol.emit("Результат сверки для УБП {}".format(self.ubp))
+        self.protokol.emit("<p>Результат сверки для УБП {}".format(self.ubp))
         if v_postup_value == o_postup_value:
             self.protokol.emit("&nbsp;&nbsp;&nbsp;&nbsp;Поступления в выписке и отчете <font color='green'>Равны</font>")
         else:
@@ -117,7 +117,7 @@ class ReadExcel(QThread):
             self.protokol.emit("&nbsp;&nbsp;&nbsp;&nbsp;Зачеты в выписке и отчете <font color='red'>Различаются на {}</font>".format(abs(v_zachet_value-o_zachet_value)))
         
         if o_itogo_value == c_perechislen_value + c_ostatok_value + c_postup_vsego_value:
-            self.protokol.emit("&nbsp;&nbsp;&nbsp;&nbsp;Итого в выписке и отчете <font color='green'>Равны</font>")
+            self.protokol.emit("&nbsp;&nbsp;&nbsp;&nbsp;Итого в отчете и справке <font color='green'>Равны</font></p>")
         else:
-            self.protokol.emit("&nbsp;&nbsp;&nbsp;&nbsp;Поступления в выписке и отчете <font color='red'>Различаются на {}</font>".format(abs((c_perechislen_value + c_ostatok_value + c_postup_vsego_value)-o_itogo_value)))
+            self.protokol.emit("&nbsp;&nbsp;&nbsp;&nbsp;Итого в отчете и справке <font color='red'>Различаются на {}</font></p>".format(abs((c_perechislen_value + c_ostatok_value + c_postup_vsego_value)-o_itogo_value)))
         

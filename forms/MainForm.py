@@ -1,19 +1,28 @@
 from PyQt5 import QtWidgets, QtCore
 from libs.read_excel import ReadExcel
 from ui_windows.MainWindow import Ui_MainWindow
+from forms.AboutForm import AboutForm
 import re, os
+from constants import app_constants
 
 class MainForm(QtWidgets.QMainWindow):
     def __init__(self):
         super(MainForm, self).__init__()
         self.ui = Ui_MainWindow()
         self.ui.setupUi(self)
+        self.ui.action.triggered.connect(self.open_about_form)
+        self.setWindowTitle(app_constants.app_name + " v" + app_constants.app_version)
         self.ui.pbutton_choose_files.clicked.connect(self.choose_starter_file)
         self.ui.txt_edit_protokol.setReadOnly(True)
         self.files_path = None
         self.files = None
+        self.about_form = None
 
         self.read_excel_thread = None
+    
+    def open_about_form(self):
+        self.about_form = AboutForm()
+        self.about_form.show()
 
     @QtCore.pyqtSlot(str)
     def add_message_to_protokol(self, message):
