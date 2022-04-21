@@ -1,4 +1,5 @@
 from PyQt5 import QtWidgets, QtCore
+from libs.read_excel import ReadExcel
 from ui_windows.MainWindow import Ui_MainWindow
 import re, os
 
@@ -10,6 +11,8 @@ class MainForm(QtWidgets.QMainWindow):
         self.ui.pbutton_choose_files.clicked.connect(self.choose_starter_file)
         self.files_path = None
         self.files = None
+
+        self.read_excel_thread = None
 
 
     def choose_starter_file(self):
@@ -24,12 +27,12 @@ class MainForm(QtWidgets.QMainWindow):
 
         regular = re.compile(r"^C?V?O?"+ubp+r"\.xls.?$")
 
-        self.files = []
+        self.files = {}
 
         for file_name in os.listdir(self.files_path):
             if(os.path.isfile(self.files_path + file_name)):
                 if regular.match(file_name) is not None:
-                    self.files.append(file_name)
+                    self.files[file_name[0]] = file_name
 
         if len(self.files) < 3:
             print("Не хватает файлов")
@@ -37,7 +40,10 @@ class MainForm(QtWidgets.QMainWindow):
             print("В папке присутствует слишком много файлов с данным УБП")
         else:
             if self.check_current_files() == True:
+                self.read_excel_thread = ReadExcel(self, self.files, self.files_path)
+                self.read_excel_thread.start()
                 print("Все файлы получены")
+
             else:
                 print("Нет всех нужных файлов")
                 for file in self.files:
@@ -49,12 +55,13 @@ class MainForm(QtWidgets.QMainWindow):
         v_count = 0
         o_count = 0
 
-        for file in self.files:
-            if file.__contains__("C"):
+        for type, file in self.files.items():
+
+            if type.__contains__("C"):
                 c_count+=1
-            if file.__contains__("V"):
+            if type.__contains__("V"):
                 v_count+=1
-            if file.__contains__("O"):
+            if type.__contains__("O"):
                 o_count+=1
 
         if c_count == 1 and v_count == 1 and o_count == 1:
