@@ -1,32 +1,31 @@
 import pandas as pd
 
 
-c_workbook = pd.read_excel("C:\\Users\\ufk4800_mnovikov\\Desktop\\TZ\\C00001.xls", sheet_name=1)
-values = c_workbook.values
+o_workbook = pd.read_html("C:\\Users\\ufk4800_mnovikov\\Desktop\\O00001.xls")
+values = o_workbook[0].values
 
-c_perechislen_value = 0
-c_ostatok_value = 0
-c_postup_vsego_value = 0
-
-for i in range(len(values)):
-    if str(values[i][2]) == "Всего по разделам I и II":
-        c_perechislen_value = float(str(values[i][7]).replace(' ','').replace(',','.'))
-
-
-c_workbook = pd.read_excel("C:\\Users\\ufk4800_mnovikov\\Desktop\\TZ\\C00001.xls", sheet_name=2)
-values = c_workbook.values
+o_postup_value = 0
+o_vozvrat_value = 0
+o_zachet_value = 0
+o_itogo_value = 0
 
 for i in range(len(values)):
-    if str(values[i][2]) == "Всего по разделам I и II":
-        c_ostatok_value = float(str(values[i][14]).replace(' ','').replace(',','.'))
+    for j in range(len(values[i])):
+        if str(values[i][j]).__contains__("Поступления"):
+            o_postup_col = j
+        if str(values[i][j]).__contains__("Возвраты"):
+            o_vozvrat_col = j
+        if str(values[i][j]).__contains__("Зачеты"):
+            o_zachet_col = j
+        if str(values[i][j]) == "Итого":
+            o_itogo_col = j
+        if str(values[i][j]) == "Итого:":
+            o_postup_value = float(values[i][o_postup_col].replace(' ','').replace(',','.'))
+            o_vozvrat_value = float(values[i][o_vozvrat_col].replace(' ','').replace(',','.'))
+            o_zachet_value = float(values[i][o_zachet_col].replace(' ','').replace(',','.'))
+            o_itogo_value = float(values[i][o_itogo_col].replace(' ','').replace(',','.'))
 
-c_workbook = pd.read_excel("C:\\Users\\ufk4800_mnovikov\\Desktop\\TZ\\C00001.xls", sheet_name=3)
-values = c_workbook.values
-
-for i in range(len(values)):
-    if str(values[i][2]) == "Всего по разделу III":
-        c_postup_vsego_value = float(str(values[i][3]).replace(' ','').replace(',','.'))
-
-print(str(c_perechislen_value))
-print(str(c_ostatok_value))
-print(str(c_postup_vsego_value))
+print(o_postup_value)
+print(o_vozvrat_value)
+print(o_zachet_value)
+print(o_itogo_value)

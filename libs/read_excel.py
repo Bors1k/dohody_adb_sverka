@@ -48,25 +48,53 @@ class ReadExcel(QThread):
             print(str(v_zachet_value))
 
             # Отчет о состоянии лицевого счета АДБ файл «OXXXXX. xls»
-            o_workbook = pd.read_excel(self.file_path + files['O'], sheet_name=1)
-            values = o_workbook.values
-
             o_postup_value = 0
             o_vozvrat_value = 0
             o_zachet_value = 0
             o_itogo_value = 0
+            try:
+                # Если не формат excel то выполнется корректно
+                o_workbook = pd.read_excel(self.file_path + files['O'], sheet_name=1)
+                values = o_workbook.values
 
-            for i in range(len(values)):
-                if str(values[i][1]) == "Итого:":
-                    o_postup_value = float(str(values[i][2]).replace(' ','').replace(',','.'))
-                    o_vozvrat_value = float(str(values[i][3]).replace(' ','').replace(',','.'))
-                    o_zachet_value = float(str(values[i][4]).replace(' ','').replace(',','.'))
-                    o_itogo_value = float(str(values[i][5]).replace(' ','').replace(',','.'))
+                for i in range(len(values)):
+                    if str(values[i][1]) == "Итого:":
+                        o_postup_value = float(str(values[i][2]).replace(' ','').replace(',','.'))
+                        o_vozvrat_value = float(str(values[i][3]).replace(' ','').replace(',','.'))
+                        o_zachet_value = float(str(values[i][4]).replace(' ','').replace(',','.'))
+                        o_itogo_value = float(str(values[i][5]).replace(' ','').replace(',','.'))
 
-            print(str(o_postup_value))
-            print(str(o_vozvrat_value))
-            print(str(o_zachet_value))
-            print(str(o_itogo_value))
+                print(str(o_postup_value))
+                print(str(o_vozvrat_value))
+                print(str(o_zachet_value))
+                print(str(o_itogo_value))
+
+            except ValueError as ex:
+                # Если это скрытый html под excel, то считываем иначе
+                o_workbook = pd.read_html(self.file_path + files['O'])
+                values = o_workbook[0].values
+
+                for i in range(len(values)):
+                    for j in range(len(values[i])):
+                        if str(values[i][j]).__contains__("Поступления"):
+                            o_postup_col = j
+                        if str(values[i][j]).__contains__("Возвраты"):
+                            o_vozvrat_col = j
+                        if str(values[i][j]).__contains__("Зачеты"):
+                            o_zachet_col = j
+                        if str(values[i][j]) == "Итого":
+                            o_itogo_col = j
+                        if str(values[i][j]) == "Итого:":
+                            o_postup_value = float(values[i][o_postup_col].replace(' ','').replace(',','.'))
+                            o_vozvrat_value = float(values[i][o_vozvrat_col].replace(' ','').replace(',','.'))
+                            o_zachet_value = float(values[i][o_zachet_col].replace(' ','').replace(',','.'))
+                            o_itogo_value = float(values[i][o_itogo_col].replace(' ','').replace(',','.'))
+
+                print(o_postup_value)
+                print(o_vozvrat_value)
+                print(o_zachet_value)
+                print(o_itogo_value)
+            
 
             # Справка о перечислении поступлений в бюджеты для АДБ файл «CXXXXX.xls»
             c_workbook = pd.read_excel(self.file_path + files['C'], sheet_name=1)
