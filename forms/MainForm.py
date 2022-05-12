@@ -1,5 +1,7 @@
 from PyQt5 import QtWidgets, QtCore
+from PyQt5.QtWidgets import QFileDialog
 from libs.read_excel import ReadExcel
+from libs.save_to_excel import SaveExcel
 from ui_windows.MainWindow import Ui_MainWindow
 from forms.AboutForm import AboutForm
 import re, os
@@ -15,11 +17,15 @@ class MainForm(QtWidgets.QMainWindow):
         self.setWindowTitle(app_constants.app_name + " v" + app_constants.app_version)
         self.ui.pbutton_choose_files.clicked.connect(self.choose_starter_file)
         self.ui.txt_edit_protokol.setReadOnly(True)
+        self.ui.pb_save_to_excel.setVisible(False)
+        self.ui.pb_save_to_excel.clicked.connect(self.save_to_excel)
+
         self.files_path = None
         self.files = None
         self.about_form = None
 
         self.read_excel_thread = None
+        self.messages = []
     
     def open_about_form(self):
         self.about_form = AboutForm()
@@ -31,6 +37,7 @@ class MainForm(QtWidgets.QMainWindow):
 
     def choose_starter_file(self):
         self.ui.txt_edit_protokol.clear()
+        self.messages = []
         self.qfiledlg = QtWidgets.QFileDialog()
         self.qfiledlg.setFileMode(QtWidgets.QFileDialog.FileMode.ExistingFile)
         file_path, _ = self.qfiledlg.getOpenFileName(self,filter='Excel (*.xls *.xlsx)')
@@ -43,8 +50,6 @@ class MainForm(QtWidgets.QMainWindow):
             ubps = set()
             regular_for_files_ubp = re.compile(r"^[CVO](.{5,8})\.xls.?$")
             
-
-
             for file_name in os.listdir(self.files_path):
                 if(os.path.isfile(self.files_path + file_name)):
                     if regular_for_files_ubp.match(file_name) is not None:
@@ -79,10 +84,26 @@ class MainForm(QtWidgets.QMainWindow):
             if len(self.files) != 0:
                 self.read_excel_thread = ReadExcel(self, self.files, self.files_path)
                 self.read_excel_thread.protokol.connect(self.add_message_to_protokol)
+                self.read_excel_thread.pb_change_visible.connect(self.change_visible_excel_button)
+                self.read_excel_thread.excel_protokol.connect(self.append_messages)
                 self.read_excel_thread.start()
             else:
                 self.add_message_to_protokol("<p>Не найдено файлов для проверки!</p>")
 
+    @QtCore.pyqtSlot(dict)
+    def append_messages(self, dict):
+        self.messages.append(dict)
+
+    @QtCore.pyqtSlot()
+    def change_visible_excel_button(self):
+        self.ui.pb_save_to_excel.setVisible(not self.ui.pb_save_to_excel.isVisible())
+
+    def save_to_excel(self):
+        filename, _ = QFileDialog.getSaveFileName(self,'Сохранить файл','Протокол.xlsx', ".xlsx(*.xlsx)")
+        print(filename)
+        self.save_to_excel_thread = SaveExcel(self.messages, filename)
+        self.save_to_excel_thread.pb_change_visible.connect(self.change_visible_excel_button)
+        self.save_to_excel_thread.start()
 
     def check_current_files(self, dict, ubp):
         c_count = 0

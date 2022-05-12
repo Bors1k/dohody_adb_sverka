@@ -50,6 +50,16 @@ background-color: rgb(45, 59, 68);</string>
          </widget>
         </item>
         <item>
+         <widget class="QPushButton" name="pb_save_to_excel">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Сохранить в excel</string>
+          </property>
+         </widget>
+        </item>
+        <item>
          <spacer name="horizontalSpacer">
           <property name="orientation">
            <enum>Qt::Horizontal</enum>

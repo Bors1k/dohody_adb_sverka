@@ -1,0 +1,1 @@
+pyinstaller --noconfirm --onefile --windowed --icon "D:/projects/dohody_adb_sverka/ui_windows/assets/icon.ico" --add-data "D:/projects/dohody_adb_sverka/ui_windows/assets;assets/"  "D:/projects/dohody_adb_sverka/main.py"
