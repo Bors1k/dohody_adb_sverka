@@ -129,6 +129,7 @@ class ReadExcel(QThread):
                 values = o_workbook[0].values
 
                 for i in range(len(values)):
+                    _break = False
                     for j in range(len(values[i])):
                         if str(values[i][j]).__contains__("Поступления"):
                             o_postup_col = j
@@ -146,8 +147,11 @@ class ReadExcel(QThread):
                             o_vozvrat_value = float(str(values[i][o_vozvrat_col]).replace(' ','').replace(',','.'))
                             o_zachet_value = float(str(values[i][o_zachet_col]).replace(' ','').replace(',','.'))
                             o_itogo_value = float(str(values[i][o_itogo_col]).replace(' ','').replace(',','.'))
+                            _break = True
 
-            
+                    if _break:
+                        break
+
                 j = o_date_col
                 o_date = ""
                 while j < len(values[o_date_row]):
